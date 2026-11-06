@@ -1,11 +1,39 @@
+# Python
 .venv/
+venv/
 __pycache__/
-*.py[cod]
+*.pyc
+.pytest_cache/
+
+# Node
+node_modules/
+dist/
+*.local
+
+# Environment files (keep the .env.example files)
+.env
+backend/.env
+frontend/.env
+
+# Runtime data created by the backend
+backend/inspections.db
+backend/inspections.db-*
+backend/storage/originals/*
+backend/storage/annotated/*
+backend/storage/reports/*
+backend/storage/thumbnails/*
+!backend/storage/**/.gitkeep
+
+# Datasets and training output (large)
 datasets/
 runs/
-*.pt
-*.onnx
-*.engine
-.env
-.env.*
-!.env.example
+
+# Editors / OS
+.vscode/*
+!.vscode/extensions.json
+.idea/
+.DS_Store
+
+# Model backups and unused pretrained weights
+models/best_original_backup.pt
+yolo11n.pt

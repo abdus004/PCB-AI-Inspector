@@ -1,1 +1,59 @@
 @import "tailwindcss";
+
+@theme {
+  --font-sans: "Schibsted Grotesk", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+
+  --color-ink-950: #070c18;
+  --color-ink-900: #0b1220;
+  --color-ink-850: #0f1729;
+  --color-ink-800: #131c31;
+  --color-ink-700: #1b2640;
+  --color-line: #202c47;
+  --color-fg: #e8edf5;
+  --color-mute: #94a1b8;
+  --color-dim: #6b7891;
+  --color-cyan: #4fd6e6;
+  --color-cyan-deep: #1fb5c8;
+  --color-amber: #f2b04c;
+  --color-slate-soft: #9aa8c2;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 5rem;
+}
+
+body {
+  margin: 0;
+  background: var(--color-ink-950);
+  color: var(--color-fg);
+  font-family: var(--font-sans);
+  font-variant-numeric: tabular-nums;
+  -webkit-font-smoothing: antialiased;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-cyan);
+  outline-offset: 2px;
+}
+
+::selection {
+  background: rgb(79 214 230 / 0.28);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Faint PCB-grid texture used on the hero only */
+.grid-texture {
+  background-image:
+    linear-gradient(to right, rgb(79 214 230 / 0.045) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(79 214 230 / 0.045) 1px, transparent 1px);
+  background-size: 44px 44px;
+  mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
+}
