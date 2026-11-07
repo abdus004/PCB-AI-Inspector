@@ -37,3 +37,10 @@ runs/
 # Model backups and unused pretrained weights
 models/best_original_backup.pt
 yolo11n.pt
+check_config.py
+check_dataset.py
+check_hardware.py
+check_versions.py
+fix_label_names.py
+test_yolo.py
+verify_filename_fix.py
