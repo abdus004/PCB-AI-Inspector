@@ -44,3 +44,5 @@ check_versions.py
 fix_label_names.py
 test_yolo.py
 verify_filename_fix.py
+.venv-onnx/
+models/best_backup.pt
