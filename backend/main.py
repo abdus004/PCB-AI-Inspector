@@ -3,7 +3,9 @@
 Existing endpoints kept:  /  /health  /model-info  /predict  /predict/annotated
 New endpoints:            /inspect  /inspections  /inspections/{id}[...]
 """
+import asyncio
 import logging
+import os
 import re
 from contextlib import asynccontextmanager
 from io import BytesIO
@@ -22,6 +24,10 @@ from services import report as report_service
 from services.images import ImageValidationError, ValidatedImage, validate_image_bytes
 
 logger = logging.getLogger("pcb-ai-inspector")
+
+# Decoding + inference on several large images at once multiplies peak memory, so by default
+# requests are processed one at a time (extra requests simply wait their turn).
+_gate = asyncio.Semaphore(int(os.environ.get("PCB_MAX_CONCURRENT", "1")))
 
 INSPECTION_ID_PATTERN = re.compile(r"^PCB-\d{8}-[0-9A-F]{6}$")
 
@@ -118,14 +124,16 @@ def model_info():
 
 @app.post("/predict")
 async def predict(file: UploadFile = File(...)):
-    validated = await read_and_validate(file)
-    return await run_safely(inspection_service.predict_legacy, validated, file.filename, what="The prediction")
+    async with _gate:
+        validated = await read_and_validate(file)
+        return await run_safely(inspection_service.predict_legacy, validated, file.filename, what="The prediction")
 
 
 @app.post("/predict/annotated")
 async def predict_annotated(file: UploadFile = File(...)):
-    validated = await read_and_validate(file)
-    jpeg = await run_safely(inspection_service.predict_annotated_legacy, validated, what="The prediction")
+    async with _gate:
+        validated = await read_and_validate(file)
+        jpeg = await run_safely(inspection_service.predict_annotated_legacy, validated, what="The prediction")
     return StreamingResponse(BytesIO(jpeg), media_type="image/jpeg")
 
 
@@ -135,8 +143,9 @@ async def predict_annotated(file: UploadFile = File(...)):
 @app.post("/inspect", status_code=201)
 async def inspect(file: UploadFile = File(...)):
     """Validate -> run YOLO once -> annotate -> save -> return full results."""
-    validated = await read_and_validate(file)
-    return await run_safely(inspection_service.run_inspection, validated, file.filename, what="The inspection")
+    async with _gate:
+        validated = await read_and_validate(file)
+        return await run_safely(inspection_service.run_inspection, validated, file.filename, what="The inspection")
 
 
 @app.get("/inspections")
