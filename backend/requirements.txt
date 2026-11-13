@@ -1,6 +1,10 @@
-fastapi>=0.110
-uvicorn[standard]>=0.29
-python-multipart>=0.0.9
-ultralytics>=8.3
-pillow>=10.1
-reportlab>=4.0
+# Runtime dependencies for the API (ONNX Runtime build: no PyTorch / Ultralytics needed).
+# Versions are the ones this configuration was tested with (Python 3.12).
+fastapi==0.162.5
+uvicorn==0.54.0
+python-multipart==0.0.33
+pillow==13.0.0
+reportlab==5.1.0
+numpy==2.5.4
+onnxruntime==1.31.1
+opencv-python-headless==5.0.0.93

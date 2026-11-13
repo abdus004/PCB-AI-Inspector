@@ -26,8 +26,8 @@ def _load_dotenv() -> None:
 _load_dotenv()
 
 # ---- Model -----------------------------------------------------------------
-# Your trained weights live at <project root>/models/best.pt
-MODEL_PATH = Path(os.environ.get("PCB_MODEL_PATH", BASE_DIR / "models" / "best.pt"))
+# Your trained weights live at <project root>/models/best.onnx
+MODEL_PATH = Path(os.environ.get("PCB_MODEL_PATH", BASE_DIR / "models" / "best.onnx"))
 MODEL_NAME = "YOLO11n"
 IMAGE_SIZE = 640          # same as the original /predict endpoint
 CONF_THRESHOLD = 0.25     # detections at or above this are reported (same as before)
@@ -53,7 +53,9 @@ EVALUATION = {
 # ---- Uploads ---------------------------------------------------------------
 MAX_UPLOAD_BYTES = 10 * 1024 * 1024          # 10 MB
 ALLOWED_FORMATS = {"JPEG": "jpg", "PNG": "png", "WEBP": "webp"}   # PIL format -> extension
-MAX_IMAGE_PIXELS = 60_000_000                 # protects against decompression bombs
+# Largest accepted image, in pixels (protects against decompression bombs AND keeps memory low:
+# a decoded RGB image costs ~3 bytes per pixel, and several copies exist during inspection).
+MAX_IMAGE_PIXELS = int(os.environ.get("PCB_MAX_IMAGE_PIXELS", 12_000_000))   # 12 MP, e.g. 4000 x 3000
 
 # ---- Storage ---------------------------------------------------------------
 STORAGE_DIR = Path(os.environ.get("PCB_STORAGE_DIR", BACKEND_DIR / "storage"))
